@@ -1,0 +1,1 @@
+HCopy -A -V -T 1 -C ../config/config.hcopy -S genmfc.train 
