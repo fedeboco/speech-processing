@@ -1,0 +1,447 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>practica6_v8</title><meta name="generator" content="MATLAB 8.5"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2018-05-07"><meta name="DC.source" content="practica6_v8.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#2">Preparo muestras</a></li><li><a href="#3">LDA - Linear Discriminant Analysis</a></li><li><a href="#4">K-means - inicializaci&oacute;n con ejemplos</a></li><li><a href="#5">K-means - inicializaci&oacute;n aleatoria</a></li><li><a href="#6">Plots K-means</a></li><li><a href="#7">EM - Expectation Maximization - Inicializaci&oacute;n con ejemplos</a></li><li><a href="#8">EM - Expectation Maximization - Inicializaci&oacute;n aleatoria</a></li><li><a href="#9">Plots EM</a></li></ul></div><pre class="codeinput"><span class="comment">%Pr&aacute;ctica 6: LDA, K-means, EM.</span>
+<span class="comment">%JTP: Pelle, Patricia</span>
+<span class="comment">%Alumno: Federico P&eacute;rez Boco, 96777</span>
+<span class="comment">%Primer cuatrimestre 2018 - Proc. del Habla - FIUBA</span>
+
+close <span class="string">all</span>;
+</pre><h2>Preparo muestras<a name="2"></a></h2><pre class="codeinput">a_tot = dlmread(<span class="string">'./a.txt'</span>,<span class="string">'	'</span>); <span class="comment">%todas las muestras</span>
+o_tot = dlmread(<span class="string">'./o.txt'</span>,<span class="string">'	'</span>);
+u_tot = dlmread(<span class="string">'./u.txt'</span>,<span class="string">'	'</span>);
+
+a = a_tot(1:40,1:2); <span class="comment">%para training</span>
+o = o_tot(1:40,1:2);
+u = u_tot(1:40,1:2);
+
+a_test = a_tot(41:50,1:2); <span class="comment">%para testing</span>
+o_test = o_tot(41:50,1:2);
+u_test = u_tot(41:50,1:2);
+test = [a_test; o_test; u_test];
+</pre><h2>LDA - Linear Discriminant Analysis<a name="3"></a></h2><pre class="codeinput">[mu_a, mu_o, mu_u] = estimar_medias_LDA(a,o,u);
+sigma = estimar_sigma_LDA(a,o,u,mu_a,mu_o,mu_u);
+
+[X, Y, Za, Zo, Zu] = calc_curvas_nvl(mu_a, mu_o, mu_u, sigma);
+[gA, gO, gU, x1, x2, x3] = calc_discriminante_LDA(a, o ,u, test, mu_a, mu_o, mu_u, sigma);
+[A, O, U] = clasificar(test, gA, gO, gU);
+ploteo_LDA(a,o,u,mu_a,mu_o,mu_u,X,Y,Za,Zo,Zu,x1,x2,x3,A,O,U,a_test,o_test,u_test,gA,gO,gU);
+
+sigma_LDA = sigma; <span class="comment">%para usar en EM</span>
+</pre><img vspace="5" hspace="5" src="practica6_v8_01.png" alt=""> <h2>K-means - inicializaci&oacute;n con ejemplos<a name="4"></a></h2><pre class="codeinput">K = 3; <span class="comment">%nro de clases</span>
+indices_aleatorios = randperm(40);
+proto_a = a(indices_aleatorios(36:40),:); <span class="comment">%Muestras prototipo</span>
+proto_o = o(indices_aleatorios(36:40),:);
+proto_u = u(indices_aleatorios(36:40),:);
+KM = [a(indices_aleatorios(1:35),:); o(indices_aleatorios(1:35),:); u(indices_aleatorios(1:35),:)]; <span class="comment">%Muestras de training</span>
+
+mu_aK = sum(proto_a)/length(proto_a);
+mu_oK = sum(proto_o)/length(proto_o);
+mu_uK = sum(proto_u)/length(proto_u);
+muK = [mu_aK; mu_oK; mu_uK]; <span class="comment">%Medias prototipo</span>
+
+[~, muK1, ~, a_KM1, o_KM1, u_KM1] = kmeans_fiubense(KM, muK,<span class="string">'K-Means: Inicializaci&oacute;n con ejemplos'</span>);
+sigma = calc_sigma_kmeans(a_KM1,o_KM1,u_KM1,muK1);
+[gA, gO, gU] = calc_discriminante_kmeans(proto_a, proto_o ,proto_u, test, muK1(1,:), muK1(2,:), muK1(3,:), sigma);
+[a_KM_test1, o_KM_test1, u_KM_test1] = clasificar(test, gA, gO, gU);
+error_bootstrap_KM = calc_error_total(a_test, o_test, u_test, a_KM_test1, o_KM_test1, u_KM_test1);
+disp([<span class="string">'Error K-means (Bootstrap) = '</span>,num2str(error_bootstrap_KM),<span class="string">'%'</span>])
+[X1, Y1, Za1, Zo1, Zu1] = calc_curvas_nvl_kmeans(muK1(1,:), muK1(2,:), muK1(3,:), sigma);
+
+mu_prototipo = muK; <span class="comment">%para usar en EM</span>
+</pre><pre class="codeoutput">Error K-means (Bootstrap) = 6.6667%
+</pre><img vspace="5" hspace="5" src="practica6_v8_02.png" alt=""> <h2>K-means - inicializaci&oacute;n aleatoria<a name="5"></a></h2><pre class="codeinput">K = 3; <span class="comment">%nro de clases</span>
+muestras_entrenam = [a; o; u];
+media_gral = sum( muestras_entrenam )/length( muestras_entrenam );
+phi = calc_angulos(K); <span class="comment">%aleatorios</span>
+[muK, xF1, xF2] = calc_centroides(phi, K, muestras_entrenam, media_gral); <span class="comment">%xF1 y xF2 son las posiciones de los centroides</span>
+
+[~, muK2, ~, a_KM2, o_KM2, u_KM2] = kmeans_fiubense([a; o; u], muK,<span class="string">'K-Means: Inicializaci&oacute;n Aleatoria'</span>);
+sigma = calc_sigma_kmeans(a_KM2,o_KM2,u_KM2,muK2);
+[a_KM2, o_KM2, u_KM2, muK2, sigma] = reclasificar(a, o, u, a_KM2, o_KM2, u_KM2, muK2, sigma); <span class="comment">%corrige etiquetas</span>
+[gA, gO, gU] = calc_discriminante_kmeans(a, o ,u, test, muK2(1,:), muK2(2,:), muK2(3,:), sigma);
+[a_KM_test2, o_KM_test2, u_KM_test2] = clasificar(test, gA, gO, gU);
+error_aleatorio_KM = calc_error_total(a_test, o_test, u_test, a_KM_test2, o_KM_test2, u_KM_test2);
+disp([<span class="string">'Error K-means (Aleatorio) = '</span>,num2str(error_aleatorio_KM),<span class="string">'%'</span>])
+[X2, Y2, Za2, Zo2, Zu2] = calc_curvas_nvl_kmeans(muK2(1,:), muK2(2,:), muK2(3,:), sigma);
+
+mu_aleatorio = muK; <span class="comment">%para EM</span>
+</pre><pre class="codeoutput">Error K-means (Aleatorio) = 6.6667%
+</pre><img vspace="5" hspace="5" src="practica6_v8_03.png" alt=""> <h2>Plots K-means<a name="6"></a></h2><pre class="codeinput"><span class="comment">%Inicializaci&oacute;n con ejemplos</span>
+figure(<span class="string">'name'</span>,<span class="string">'Training K-Means'</span>,<span class="string">'units'</span>,<span class="string">'normalized'</span>,<span class="string">'outerposition'</span>,[0.1 0.4 0.85 0.5])
+subplot(1,3,1)
+plotear_resultado_kmeans(a_KM1, o_KM1, u_KM1, muK1)
+title(<span class="string">'Resultado K-means con inicializaci&oacute;n usando ejemplos'</span>)
+plotear_centroides_iniciales(muK, xF1, xF2, phi, media_gral)
+title(<span class="string">'Divisi&oacute;n aleatoria inicial para K-means'</span>)
+
+<span class="comment">%Inicializaci&oacute;n aleatoria</span>
+subplot(1,3,3)
+plotear_resultado_kmeans(a_KM2, o_KM2, u_KM2, muK2)
+title(<span class="string">'Resultado K-means con inicializaci&oacute;n aleatoria'</span>)
+
+<span class="comment">%Ploteo tests</span>
+figure(<span class="string">'name'</span>,<span class="string">'Testing K-Means'</span>,<span class="string">'units'</span>,<span class="string">'normalized'</span>,<span class="string">'outerposition'</span>,[0.3 0.4 0.6 0.5])
+subplot(1,2,1)
+plot_test_KM(a_KM_test1, o_KM_test1, u_KM_test1, a_test, o_test, u_test, muK1, X1, Y1, Za1, Zo1, Zu1)
+title(<span class="string">'Testing KM con inicializaci&oacute;n con ejemplos'</span>)
+text(300,1550,[<span class="string">'Error = '</span>,num2str(error_bootstrap_KM),<span class="string">'%'</span>], <span class="string">'fontsize'</span>, 9)
+subplot(1,2,2)
+plot_test_KM(a_KM_test2, o_KM_test2, u_KM_test2, a_test, o_test, u_test, muK2, X2, Y2, Za2, Zo2, Zu2)
+title(<span class="string">'Testing KM con inicializaci&oacute;n aleatoria'</span>)
+text(300,1550,[<span class="string">'Error = '</span>,num2str(error_aleatorio_KM),<span class="string">'%'</span>], <span class="string">'fontsize'</span>, 9)
+</pre><img vspace="5" hspace="5" src="practica6_v8_04.png" alt=""> <img vspace="5" hspace="5" src="practica6_v8_05.png" alt=""> <h2>EM - Expectation Maximization - Inicializaci&oacute;n con ejemplos<a name="7"></a></h2><pre class="codeinput"><span class="comment">%1) Inicializaciones---------------</span>
+K = 3;
+data_E = [a(indices_aleatorios(1:35),:); o(indices_aleatorios(1:35),:); u(indices_aleatorios(1:35),:)]; <span class="comment">%data entrenamiento</span>
+mu = mu_prototipo;
+N = length(data_E);
+<span class="comment">%Inicializo sigma para que pueda depender de la clase</span>
+<span class="keyword">for</span> j=1:K
+   sigma(:,:,j) = sigma_LDA;
+<span class="keyword">end</span>
+p_clase = inicializar_prob_clases(K); <span class="comment">%asume uniforme</span>
+
+mu_acum(:,:,1) = mu;
+
+<span class="comment">%training</span>
+figure(<span class="string">'name'</span>,<span class="string">'Training EM'</span>,<span class="string">'units'</span>,<span class="string">'normalized'</span>,<span class="string">'outerposition'</span>,[0.1 0.2 0.85 0.65])
+<span class="keyword">for</span> i=1:10
+    <span class="comment">%2) Paso E - Expectation----------</span>
+    gamma = calc_gamma(K, mu, sigma, p_clase, data_E);
+
+    <span class="comment">%3) Paso M - Maximization---------</span>
+    mu = calc_mu(data_E, gamma);
+    aux = sigma;
+    sigma = calc_sigma(data_E, gamma, mu);
+    p_clase = calc_prob_clases(data_E, gamma);
+
+    LL = calc_loglikelihood(data_E, mu, sigma, K, N, p_clase);
+
+    <span class="comment">%4) Plot</span>
+    subplot_EM(i, data_E, gamma, mu, LL, mu_acum)
+    mu_acum(:,:,i) = mu;
+<span class="keyword">end</span>
+
+<span class="comment">%testing</span>
+[gA, gO, gU] = calc_discriminante_EM(a, o ,u, test, mu(1,:), mu(2,:), mu(3,:), sigma);
+[a_clasif1, o_clasif1, u_clasif1] = clasificar(test, gA, gO, gU);
+[X1, Y1, Za1, Zo1, Zu1] = calc_curvas_nvl_kmeans(mu(1,:), mu(2,:), mu(3,:), sigma);
+error_bootstrap_EM = calc_error_total(a_test, o_test, u_test, a_clasif1, o_clasif1, u_clasif1);
+disp([<span class="string">'Error EM (Bootstrap) = '</span>,num2str(error_bootstrap_EM),<span class="string">'%'</span>])
+mu1 = mu;
+</pre><pre class="codeoutput">Error EM (Bootstrap) = 16.6667%
+</pre><img vspace="5" hspace="5" src="practica6_v8_06.png" alt=""> <h2>EM - Expectation Maximization - Inicializaci&oacute;n aleatoria<a name="8"></a></h2><pre class="codeinput"><span class="comment">%1) Inicializaciones---------------</span>
+K = 3;
+data_E = [a; o; u]; <span class="comment">%data entrenamiento</span>
+mu = mu_aleatorio;
+N = length(data_E);
+<span class="comment">%Inicializo sigma para que pueda depender de la clase</span>
+<span class="keyword">for</span> j=1:K
+   sigma(:,:,j) = sigma_LDA;
+<span class="keyword">end</span>
+p_clase = inicializar_prob_clases(K); <span class="comment">%asume uniforme</span>
+
+<span class="comment">%training</span>
+figure(<span class="string">'name'</span>,<span class="string">'Training EM'</span>,<span class="string">'units'</span>,<span class="string">'normalized'</span>,<span class="string">'outerposition'</span>,[0.1 0.2 0.85 0.65])
+<span class="keyword">for</span> i=1:10
+    <span class="comment">%2) Paso E - Expectation----------</span>
+    gamma = calc_gamma(K, mu, sigma, p_clase, data_E);
+
+    <span class="comment">%3) Paso M - Maximization---------</span>
+    mu = calc_mu(data_E, gamma);
+    aux = sigma;
+    sigma = calc_sigma(data_E, gamma, mu);
+    p_clase = calc_prob_clases(data_E, gamma);
+
+    LL = calc_loglikelihood(data_E, mu, sigma, K, N, p_clase);
+
+    <span class="comment">%4) Plot</span>
+    subplot_EM(i, data_E, gamma, mu, LL, mu_acum)
+    mu_acum(:,:,i) = mu;
+<span class="keyword">end</span>
+
+<span class="comment">%testing</span>
+[gA, gO, gU] = calc_discriminante_EM(a, o ,u, test, mu(1,:), mu(2,:), mu(3,:), sigma);
+[a_clasif2, o_clasif2, u_clasif2] = clasificar(test, gA, gO, gU);
+[a_clasif2, o_clasif2, u_clasif2, mu, sigma] = reclasificar(a, o, u, a_clasif2, o_clasif2, u_clasif2, mu, sigma); <span class="comment">%corrige etiquetas</span>
+[X2, Y2, Za2, Zo2, Zu2] = calc_curvas_nvl_kmeans(mu(1,:), mu(2,:), mu(3,:), sigma);
+error_aleatorio_EM = calc_error_total(a_test, o_test, u_test, a_clasif2, o_clasif2, u_clasif2);
+disp([<span class="string">'Error EM (Aleatorio) = '</span>,num2str(error_aleatorio_EM),<span class="string">'%'</span>])
+mu2 = mu;
+</pre><pre class="codeoutput">Error EM (Aleatorio) = 26.6667%
+</pre><img vspace="5" hspace="5" src="practica6_v8_07.png" alt=""> <h2>Plots EM<a name="9"></a></h2><pre class="codeinput">figure(<span class="string">'name'</span>,<span class="string">'Testing EM'</span>,<span class="string">'units'</span>,<span class="string">'normalized'</span>,<span class="string">'outerposition'</span>,[0.3 0.4 0.6 0.5])
+subplot(1,2,1)
+plot_test_KM(a_clasif1, o_clasif1, u_clasif1, a_test, o_test, u_test, mu1, X1, Y1, Za1, Zo1, Zu1)
+title(<span class="string">'Testing EM - Inicializaci&oacute;n con ejemplos'</span>)
+text(300,1550,[<span class="string">'Error = '</span>,num2str(error_bootstrap_EM),<span class="string">'%'</span>], <span class="string">'fontsize'</span>, 9)
+
+subplot(1,2,2)
+plot_test_KM(a_clasif2, o_clasif2, u_clasif2, a_test, o_test, u_test, mu2, X2, Y2, Za2, Zo2, Zu2)
+title(<span class="string">'Testing EM - Inicializaci&oacute;n aleatoria'</span>)
+text(300,1550,[<span class="string">'Error = '</span>,num2str(error_aleatorio_EM),<span class="string">'%'</span>], <span class="string">'fontsize'</span>, 9)
+</pre><img vspace="5" hspace="5" src="practica6_v8_08.png" alt=""> <p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2015a</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%Práctica 6: LDA, K-means, EM.
+%JTP: Pelle, Patricia
+%Alumno: Federico Pérez Boco, 96777
+%Primer cuatrimestre 2018 - Proc. del Habla - FIUBA
+
+close all;
+
+%% Preparo muestras
+
+a_tot = dlmread('./a.txt','	'); %todas las muestras
+o_tot = dlmread('./o.txt','	');
+u_tot = dlmread('./u.txt','	');
+
+a = a_tot(1:40,1:2); %para training
+o = o_tot(1:40,1:2);
+u = u_tot(1:40,1:2);
+
+a_test = a_tot(41:50,1:2); %para testing
+o_test = o_tot(41:50,1:2);
+u_test = u_tot(41:50,1:2);
+test = [a_test; o_test; u_test];
+
+%% LDA - Linear Discriminant Analysis
+
+[mu_a, mu_o, mu_u] = estimar_medias_LDA(a,o,u);
+sigma = estimar_sigma_LDA(a,o,u,mu_a,mu_o,mu_u);
+    
+[X, Y, Za, Zo, Zu] = calc_curvas_nvl(mu_a, mu_o, mu_u, sigma);
+[gA, gO, gU, x1, x2, x3] = calc_discriminante_LDA(a, o ,u, test, mu_a, mu_o, mu_u, sigma);
+[A, O, U] = clasificar(test, gA, gO, gU);
+ploteo_LDA(a,o,u,mu_a,mu_o,mu_u,X,Y,Za,Zo,Zu,x1,x2,x3,A,O,U,a_test,o_test,u_test,gA,gO,gU);
+
+sigma_LDA = sigma; %para usar en EM
+
+%% K-means - inicialización con ejemplos
+
+K = 3; %nro de clases
+indices_aleatorios = randperm(40);
+proto_a = a(indices_aleatorios(36:40),:); %Muestras prototipo
+proto_o = o(indices_aleatorios(36:40),:);
+proto_u = u(indices_aleatorios(36:40),:);
+KM = [a(indices_aleatorios(1:35),:); o(indices_aleatorios(1:35),:); u(indices_aleatorios(1:35),:)]; %Muestras de training
+
+mu_aK = sum(proto_a)/length(proto_a); 
+mu_oK = sum(proto_o)/length(proto_o);
+mu_uK = sum(proto_u)/length(proto_u);
+muK = [mu_aK; mu_oK; mu_uK]; %Medias prototipo
+    
+[~, muK1, ~, a_KM1, o_KM1, u_KM1] = kmeans_fiubense(KM, muK,'K-Means: Inicialización con ejemplos');
+sigma = calc_sigma_kmeans(a_KM1,o_KM1,u_KM1,muK1);
+[gA, gO, gU] = calc_discriminante_kmeans(proto_a, proto_o ,proto_u, test, muK1(1,:), muK1(2,:), muK1(3,:), sigma);
+[a_KM_test1, o_KM_test1, u_KM_test1] = clasificar(test, gA, gO, gU);  
+error_bootstrap_KM = calc_error_total(a_test, o_test, u_test, a_KM_test1, o_KM_test1, u_KM_test1);
+disp(['Error K-means (Bootstrap) = ',num2str(error_bootstrap_KM),'%'])  
+[X1, Y1, Za1, Zo1, Zu1] = calc_curvas_nvl_kmeans(muK1(1,:), muK1(2,:), muK1(3,:), sigma);
+
+mu_prototipo = muK; %para usar en EM
+
+%% K-means - inicialización aleatoria
+
+K = 3; %nro de clases
+muestras_entrenam = [a; o; u];
+media_gral = sum( muestras_entrenam )/length( muestras_entrenam );
+phi = calc_angulos(K); %aleatorios
+[muK, xF1, xF2] = calc_centroides(phi, K, muestras_entrenam, media_gral); %xF1 y xF2 son las posiciones de los centroides
+
+[~, muK2, ~, a_KM2, o_KM2, u_KM2] = kmeans_fiubense([a; o; u], muK,'K-Means: Inicialización Aleatoria');
+sigma = calc_sigma_kmeans(a_KM2,o_KM2,u_KM2,muK2);
+[a_KM2, o_KM2, u_KM2, muK2, sigma] = reclasificar(a, o, u, a_KM2, o_KM2, u_KM2, muK2, sigma); %corrige etiquetas
+[gA, gO, gU] = calc_discriminante_kmeans(a, o ,u, test, muK2(1,:), muK2(2,:), muK2(3,:), sigma);
+[a_KM_test2, o_KM_test2, u_KM_test2] = clasificar(test, gA, gO, gU); 
+error_aleatorio_KM = calc_error_total(a_test, o_test, u_test, a_KM_test2, o_KM_test2, u_KM_test2);
+disp(['Error K-means (Aleatorio) = ',num2str(error_aleatorio_KM),'%'])
+[X2, Y2, Za2, Zo2, Zu2] = calc_curvas_nvl_kmeans(muK2(1,:), muK2(2,:), muK2(3,:), sigma);
+
+mu_aleatorio = muK; %para EM
+
+%% Plots K-means
+
+%Inicialización con ejemplos
+figure('name','Training K-Means','units','normalized','outerposition',[0.1 0.4 0.85 0.5])      
+subplot(1,3,1)
+plotear_resultado_kmeans(a_KM1, o_KM1, u_KM1, muK1)
+title('Resultado K-means con inicialización usando ejemplos') 
+plotear_centroides_iniciales(muK, xF1, xF2, phi, media_gral)
+title('División aleatoria inicial para K-means')
+
+%Inicialización aleatoria
+subplot(1,3,3)
+plotear_resultado_kmeans(a_KM2, o_KM2, u_KM2, muK2)
+title('Resultado K-means con inicialización aleatoria')
+
+%Ploteo tests
+figure('name','Testing K-Means','units','normalized','outerposition',[0.3 0.4 0.6 0.5])  
+subplot(1,2,1)
+plot_test_KM(a_KM_test1, o_KM_test1, u_KM_test1, a_test, o_test, u_test, muK1, X1, Y1, Za1, Zo1, Zu1)
+title('Testing KM con inicialización con ejemplos')
+text(300,1550,['Error = ',num2str(error_bootstrap_KM),'%'], 'fontsize', 9)
+subplot(1,2,2)
+plot_test_KM(a_KM_test2, o_KM_test2, u_KM_test2, a_test, o_test, u_test, muK2, X2, Y2, Za2, Zo2, Zu2)
+title('Testing KM con inicialización aleatoria')
+text(300,1550,['Error = ',num2str(error_aleatorio_KM),'%'], 'fontsize', 9)
+
+%% EM - Expectation Maximization - Inicialización con ejemplos
+%1) InicializacionesREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+K = 3;
+data_E = [a(indices_aleatorios(1:35),:); o(indices_aleatorios(1:35),:); u(indices_aleatorios(1:35),:)]; %data entrenamiento
+mu = mu_prototipo;
+N = length(data_E);
+%Inicializo sigma para que pueda depender de la clase
+for j=1:K
+   sigma(:,:,j) = sigma_LDA;
+end
+p_clase = inicializar_prob_clases(K); %asume uniforme
+
+mu_acum(:,:,1) = mu;
+    
+%training
+figure('name','Training EM','units','normalized','outerposition',[0.1 0.2 0.85 0.65])
+for i=1:10
+    %2) Paso E - ExpectationREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+    gamma = calc_gamma(K, mu, sigma, p_clase, data_E);
+
+    %3) Paso M - MaximizationREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+    mu = calc_mu(data_E, gamma);
+    aux = sigma;
+    sigma = calc_sigma(data_E, gamma, mu);
+    p_clase = calc_prob_clases(data_E, gamma);
+
+    LL = calc_loglikelihood(data_E, mu, sigma, K, N, p_clase);
+
+    %4) Plot
+    subplot_EM(i, data_E, gamma, mu, LL, mu_acum)
+    mu_acum(:,:,i) = mu;
+end
+    
+%testing
+[gA, gO, gU] = calc_discriminante_EM(a, o ,u, test, mu(1,:), mu(2,:), mu(3,:), sigma);
+[a_clasif1, o_clasif1, u_clasif1] = clasificar(test, gA, gO, gU);
+[X1, Y1, Za1, Zo1, Zu1] = calc_curvas_nvl_kmeans(mu(1,:), mu(2,:), mu(3,:), sigma);
+error_bootstrap_EM = calc_error_total(a_test, o_test, u_test, a_clasif1, o_clasif1, u_clasif1);
+disp(['Error EM (Bootstrap) = ',num2str(error_bootstrap_EM),'%'])
+mu1 = mu;
+
+%% EM - Expectation Maximization - Inicialización aleatoria
+%1) InicializacionesREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+K = 3;
+data_E = [a; o; u]; %data entrenamiento
+mu = mu_aleatorio;
+N = length(data_E);
+%Inicializo sigma para que pueda depender de la clase
+for j=1:K
+   sigma(:,:,j) = sigma_LDA;
+end
+p_clase = inicializar_prob_clases(K); %asume uniforme
+ 
+%training
+figure('name','Training EM','units','normalized','outerposition',[0.1 0.2 0.85 0.65])
+for i=1:10
+    %2) Paso E - ExpectationREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+    gamma = calc_gamma(K, mu, sigma, p_clase, data_E);
+
+    %3) Paso M - MaximizationREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+    mu = calc_mu(data_E, gamma);
+    aux = sigma;
+    sigma = calc_sigma(data_E, gamma, mu);
+    p_clase = calc_prob_clases(data_E, gamma);
+
+    LL = calc_loglikelihood(data_E, mu, sigma, K, N, p_clase);
+
+    %4) Plot
+    subplot_EM(i, data_E, gamma, mu, LL, mu_acum)
+    mu_acum(:,:,i) = mu;
+end
+
+%testing
+[gA, gO, gU] = calc_discriminante_EM(a, o ,u, test, mu(1,:), mu(2,:), mu(3,:), sigma);
+[a_clasif2, o_clasif2, u_clasif2] = clasificar(test, gA, gO, gU);
+[a_clasif2, o_clasif2, u_clasif2, mu, sigma] = reclasificar(a, o, u, a_clasif2, o_clasif2, u_clasif2, mu, sigma); %corrige etiquetas
+[X2, Y2, Za2, Zo2, Zu2] = calc_curvas_nvl_kmeans(mu(1,:), mu(2,:), mu(3,:), sigma);
+error_aleatorio_EM = calc_error_total(a_test, o_test, u_test, a_clasif2, o_clasif2, u_clasif2);
+disp(['Error EM (Aleatorio) = ',num2str(error_aleatorio_EM),'%'])
+mu2 = mu;
+
+%% Plots EM
+
+figure('name','Testing EM','units','normalized','outerposition',[0.3 0.4 0.6 0.5]) 
+subplot(1,2,1)
+plot_test_KM(a_clasif1, o_clasif1, u_clasif1, a_test, o_test, u_test, mu1, X1, Y1, Za1, Zo1, Zu1)
+title('Testing EM - Inicialización con ejemplos')
+text(300,1550,['Error = ',num2str(error_bootstrap_EM),'%'], 'fontsize', 9)
+
+subplot(1,2,2)
+plot_test_KM(a_clasif2, o_clasif2, u_clasif2, a_test, o_test, u_test, mu2, X2, Y2, Za2, Zo2, Zu2)
+title('Testing EM - Inicialización aleatoria')
+text(300,1550,['Error = ',num2str(error_aleatorio_EM),'%'], 'fontsize', 9)
+
+##### SOURCE END #####
+--></body></html>
