@@ -21,3 +21,10 @@ Results of some subprojects are presented in a HTML file in a "results" folder f
 ![]()<img src="https://github.com/fedeboco/speech-processing/blob/master/kmeans-LDA-EM/resultados/practica6_v8_05.png?raw=true">
 
 ##### Resultados: https://htmlpreview.github.io/?https://github.com/fedeboco/speech-processing/blob/master/kmeans-LDA-EM/resultados/resultados.html
+
+## HTK: Speech Recognition Toolkit (Cambridge University)
+
+![]()<img src="https://github.com/fedeboco/speech-processing/blob/master/HTK-speech-recognition/results-assets/resultados.jpg?raw=true">
+![]()<img src="https://github.com/fedeboco/speech-processing/blob/master/HTK-speech-recognition/results-assets/resultadosgf.jpg?raw=true">
+
+##### Resultados: https://github.com/fedeboco/speech-processing/blob/master/HTK-speech-recognition/results.pdf
