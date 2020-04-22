@@ -25,7 +25,8 @@ Cepstral Analysis is applied to study formants in speech.
 ![]()<img src="https://github.com/fedeboco/speech-processing/blob/master/kmeans-LDA-EM/resultados/practica6_v8_01.png?raw=true">
 ![]()<img src="https://github.com/fedeboco/speech-processing/blob/master/kmeans-LDA-EM/resultados/practica6_v8_03.png?raw=true">
 ![]()<img src="https://github.com/fedeboco/speech-processing/blob/master/kmeans-LDA-EM/resultados/practica6_v8_04.png?raw=true">
-![]()<img src="https://github.com/fedeboco/speech-processing/blob/master/kmeans-LDA-EM/resultados/practica6_v8_05.png?raw=true">
+![]()<p align="center"><img src="https://github.com/fedeboco/speech-processing/blob/master/kmeans-LDA-EM/resultados/practica6_v8_05.png?raw=true">
+</p>
 
 ##### Results: https://htmlpreview.github.io/?https://github.com/fedeboco/speech-processing/blob/master/kmeans-LDA-EM/resultados/resultados.html
 
