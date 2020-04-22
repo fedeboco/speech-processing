@@ -1,0 +1,134 @@
+https://anggarrgoon.wordpress.com/2017/12/01/htk-error-list/ ERRORES!!!!
+
+Copiado de material
+---------------------------------------
+Aparte de todos los archivos que hay que copiar, hay que copiar toda la
+base de datos de latino40 que esta en /dbase/latino40/
+
+1) en /home/fperez editar el .bashrc y agregar al final de todo:
+PATH=$PATH:/usr/local/speechapp/htk/bin
+Si HTK  no anda, reinciar la consola/relogearse
+
+Parametrización de los datos
+---------------------------------------
+2) Genera las carpetas de mfc:
+../scripts/go.mfclist genmfc.train genmfc.test 
+
+3) Genera los mfc:
+HCopy -A -V -T 1 -C  ../config/config.hcopy -S genmfc.train
+HCopy -A -V -T 1 -C  ../config/config.hcopy -S genmfc.test
+
+Creo el diccionario (test+train)
+----------------------------------------
+4) Cambia diccionario para español:
+export LC_CTYPE=ISO_8859_1
+
+5) Genero diccionario con train y test:
+~/proyecto/etc$ cat promptsl40.train promptsl40.test |awk '{for(i=2;i<=NF;i++){print $i}}'|sort|uniq > wlistl40
+
+6) Genero global.ded:
+Le da las instrucciones de "AS sp"
+
+7) HDMan
+Genera el diccionario dictl40 y los fonemas.
+HDMAn -w wlist40 -n monophones1 -l ../log/dlog dictl40 lexicon
+Agregar sil a monophones1. Creo monophones0 eliminando sp y agregando sil a monophones1.
+
+Genero Master Label File a nivel palabra
+-------------------------------------------
+8) Genero words.mlf (MLF a nivel palabra).
+fperez@habla:~/proyecto/etc$ ../scripts/prompts2mlf words.mlf promptsl40.train 
+
+Genero Master Label File a nivel fonema (modelo monofono con una sola gaussiana)
+-------------------------------------------
+9) HLEd
+La implementación del MLF fonético se realiza con HLEd:
+HLEd -l '*' -d dictl40 -i phones0.mlf mkphones0.led words.mlf
+Usa el diccionario dictl40, con las ediciones de mkphones y la lista de
+palabras contenida en wlistl40. El asterico es para que busque en todos los directorios.
+mkphones0.led expande, inserta sil y borra sp.
+Para futuras llamadas también hay que generar uno con sp:
+HLEd -l '*' -d dictl40 -i phones1.mlf mkphones1.led words.mlf
+Donde mkphones1.led es igual a mkphones0.led pero sin borrar sp.
+
+Genero modelos iniciales en hmm0
+-------------------------------------------
+10) HCompV
+Inicializa los modelos. vFloors es una macro que se especifica con -f y 
+establece el piso de las varianzas. Se ejecuta en models.
+Armar un config2 que solo diga TARGETKIND = MFCC_0_D_A
+Crear carpeta hmm0 en etc.
+Armar lista con:
+ls ../datos/mfc/train/*/* > train.scp
+HCompV -C ../config/config2.hcopy -f 0.01 -m -S train.scp -M hmm0 ../modelos/proto
+
+Adapto modelos iniciales para llamar a HERest
+----------------------------------------------
+11) Genero valores iniciales de HMM con el prototipo
+Genero hmmdefs asi:
+~/proyecto/etc$ ../scripts/go.gen-hmmdefs monophones1 ../modelos/proto > hmmdefs
+Genero macros asi:
+~/proyecto/etc$ ../scripts/go.gen-macros ./hmm0/vFloors ../modelos/proto > macros
+macros y hmmdefs iniciales van en hmm0
+
+Reestimaciones
+---------------------------------------------
+12) Reestimo: Invoco HEREst y copio a hmm1
+HERest -C ../config/config2.HCopy -I phones0.mlf -t 250.0 150.0 1000.0 
+-S train.scp -H hmm0/macros -H hmm0/hmmdefs -M hmm1 monophones0
+Donde monophones0 es monophones1 sin sp.
+
+13) Vuelvo a invocar HEREst y copio a hmm2. Minimo invocar 2 veces HEREst.
+
+14) Copiar a hmm3 y crear nuevo modelo sp usando sil y eliminando 2 estados.
+La matriz de transiciones de sp tiene que ser de 3x3 eliminando las dos
+ultimas columnas y las 2 anteultimas filas. Ver que suman 1. Despues se
+reestiman y en teoria dan bien.
+Ver 3.2.2
+
+15) Generar hmm4 usando HHEd para crear los arcos entre segundo y cuarto estado
+de sil y decirle a sp que comparte su estado central con el estado central de sil. 
+monophones1 tiene que tener sil y sp a diferencia de monophones0 que solo tiene
+sil para la estimacion inicial. sil.hed tiene las instrucciones para crear los arcos
+HHEd -H hmm3/macros -H hmm3/hmmdefs -M hmm4 sil.hed monophones1
+
+16) Ejecuto HERest 3 veces (hmm5,hmm6,hmm7) mas pero con sp(monophones1):
+HERest -C ../config/config2.HCopy -I phones1.mlf -t 250.0 150.0 1000.0
+-S train.scp -H hmm4/macros -H hmm4/hmmdefs -M hmm5 monophones1
+
+Creo modelos de lenguaje
+---------------------------------------------
+17) Genero el vocabulario que consiste con las palabras de test
+~/proyecto/etc$ cat promptsl40.test |awk '{for(i=2;i<=NF;i++){print $i}}'|sort|uniq > vocab
+
+18) Genero train.txt que contiene las transcripciones sin los indicadores
+de archivos:
+~/proyecto/etc$ sed -r 's/[^\t]*\t//' promptsl40.train > train.txt
+-r usa expresiones extendidas
+s indica sustitucion
+/[^\t]* busca cualquier cadena seguida de un tab
+\t agrega el tab
+/ substituye por nada (elimina)
+/ no indica ningun flag
+SUSTITUCION EN SED: 's/loquebusco/loquereemplazo/flags'
+
+19) Genero los modelos de lenguaje: se genera el archivo lml40 que me
+da todas las probabilidades de unigramas y bigramas en logaritmo (formato
+DARPA). Las que no aparecen con probabilidad de bigrama es porque nunca 
+aparecen precedidas por otra palabra en el train, es decir, son unigramas.
+Copiar el programa ngram-count en proyecto y ejecutar:
+~/proyecto$ ./ngram-count -order 2 -text etc/train.txt -lm -lml40 -ukndiscount2 -vocab etc/vocab
+
+20) A vocab le agrego <s> y </s> como palabras extra una en cada linea. Lo
+llamo vocabs. Tambien edito dictl40 agregandole al principio <s> [] sil donde
+<s> es "la palabra", [] es para decirle al HTK que "no ponga nada y no modele
+el <s> en viterbi" y sil es el modelo fonetico. Asi mismo, agregar </s> [] 
+sil al final de todo.
+
+21) HBuild: pasa lml40 de modelo ARPA al modelo que necesita HTK con todas
+las probabilidades entre todas las palabras del modelo entre nodos en la
+transcripcion de training:
+~/proyecto/etc$ HBuild -s '<s>' '</s>' -n lml40 ./etc/vocabs wdnet
+
+22) Ejecuto HVite:
+HVite -H modelos/hmm7/macros -H modelos/hmm7/hmmdefs -S etc/test.scp -l '*' -i rec/recout.mlf -w wdnet -p 0.0 -s 5.0 etc/dictl40s etc/monophones1
