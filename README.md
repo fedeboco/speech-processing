@@ -1,6 +1,11 @@
 # Speech Processing
 
-Results of some subprojects are presented in a HTML file in a "results" folder for each subproject.
+This repo consists of 4 subprojects from the assignature <86.53 - Procesamiento del Habla> from the Electronic Engineer Career of the University of Buenos Aires. They are:
+
+* Linear Predictive Coding (LPC)
+* Cepstrum
+* K-means, Linear Discriminant Analysis (LDA) and Expectation Maximization (EM)
+* HTK: Speech Recognition Toolkit (Cambridge University)
 
 # Subprojects
 
@@ -9,9 +14,11 @@ Results of some subprojects are presented in a HTML file in a "results" folder f
 ![]()<img src="https://github.com/fedeboco/speech-processing/blob/master/linear-predictive-coding/results/ej_fantasia_v3_01.png?raw=true">
 ![]()<img src="https://github.com/fedeboco/speech-processing/blob/master/linear-predictive-coding/results/ej_fantasia_v3_03.png?raw=true">
 
-##### Resultados: https://htmlpreview.github.io/?https://github.com/fedeboco/speech-processing/blob/master/linear-predictive-coding/results/results.html
+##### Results: https://htmlpreview.github.io/?https://github.com/fedeboco/speech-processing/blob/master/linear-predictive-coding/results/results.html
 
 ## Cepstrum
+
+Cepstral Analysis is applied to study formants in speech.
 
 ## K-means, Linear Discriminant Analysis (LDA) and Expectation Maximization (EM)
 
@@ -20,11 +27,11 @@ Results of some subprojects are presented in a HTML file in a "results" folder f
 ![]()<img src="https://github.com/fedeboco/speech-processing/blob/master/kmeans-LDA-EM/resultados/practica6_v8_04.png?raw=true">
 ![]()<img src="https://github.com/fedeboco/speech-processing/blob/master/kmeans-LDA-EM/resultados/practica6_v8_05.png?raw=true">
 
-##### Resultados: https://htmlpreview.github.io/?https://github.com/fedeboco/speech-processing/blob/master/kmeans-LDA-EM/resultados/resultados.html
+##### Results: https://htmlpreview.github.io/?https://github.com/fedeboco/speech-processing/blob/master/kmeans-LDA-EM/resultados/resultados.html
 
 ## HTK: Speech Recognition Toolkit (Cambridge University)
 
 ![]()<img src="https://github.com/fedeboco/speech-processing/blob/master/HTK-speech-recognition/results-assets/resultados.jpg?raw=true">
 ![]()<img src="https://github.com/fedeboco/speech-processing/blob/master/HTK-speech-recognition/results-assets/resultadosgf.jpg?raw=true">
 
-##### Resultados: https://github.com/fedeboco/speech-processing/blob/master/HTK-speech-recognition/results.pdf
+##### Results: https://github.com/fedeboco/speech-processing/blob/master/HTK-speech-recognition/results.pdf
