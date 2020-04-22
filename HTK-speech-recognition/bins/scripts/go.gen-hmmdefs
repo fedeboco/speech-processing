@@ -1,0 +1,12 @@
+#!/bin/sh
+#
+# usar: go.gen-hmmdefs phonelist proto
+#
+
+for fono in `cat $1`
+do
+	cat $2| awk "!(/STREAMINFO/||/VECSIZE/||/\~o/) {print }" | sed "s/proto/$fono/"
+	
+	
+done
+cat $2| awk "!(/STREAMINFO/||/VECSIZE/||/\~o/) {print }" | sed "s/proto/sil/"

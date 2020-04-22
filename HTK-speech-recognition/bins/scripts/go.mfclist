@@ -1,0 +1,33 @@
+#!/bin/sh
+#Crea las listas archivos a procesar por HCopy 
+#y los directorios en mfc, Ejecutarlo desde datos
+#
+
+if [ $# -ne 2 ]
+then 
+    echo Usar: $0 listatrain listatest
+    exit 1
+fi
+
+ls wav/train |\
+while read file
+do
+    mkdir mfc/train/$file
+done
+ls wav/test |\
+while read file
+do
+    mkdir mfc/test/$file
+done
+
+
+ls wav/train/*/* >p
+cat p |sed 's/wav/mfc/g' >q
+paste p q > $1
+rm p q
+
+ls wav/test/*/* >p
+cat p |sed 's/wav/mfc/g' >q
+paste p q > $2
+rm p q
+

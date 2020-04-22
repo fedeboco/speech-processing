@@ -1,0 +1,9 @@
+#!/bin/sh
+#
+# usar: go.gen-macros vFloors proto
+#
+
+cat $2 | awk "/~o/||/VECSIZE/ {print }" 
+cat $1
+	
+	
